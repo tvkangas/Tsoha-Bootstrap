@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Radat ja parhaat tulokset</h1>
+
+<table class="tabne table-striped table-bordered">
+    <thead>
+        <tr>
+            <!-- Otsikot -->
+            <th>Radan nimi</th>
+            <th>Sijainti</th>
+            <th>Rataluokitus</th>
+            <th>Par</th>
+            <th>Paras pelaaja</th>
+            <th>Paras tulos</th> 
+            <th>Pelipäivä parhaalle tulokselle</th>
+            <th></th>
+        </tr> 
+    </thead>
+    
+    <tbody>
+        <!-- Pari esimerkkiä -->
+        <tr>
+            <td>Siltamäki</td>
+            <td>Helsinki</td>
+            <td>A2</td>
+            <td>53</td>
+            <td>Kalle Kovakäsi</td>
+            <td>49(-4)</td>
+            <td> 1.7.2015</td>
+            <th><a class="btn btn-success">Muokkaa</a> <a class="btn btn-warning">Poista</a></th>
+        </tr>
+        <tr>
+            <td>Harjumaja</td>
+            <td>Savonlinna</td>
+            <td>AA1</td>
+            <td>62</td>
+            <td>Anu Annukka</td>
+            <td>53(-9)</td>
+            <td>3.6.2013</td>
+            <th><a class="btn btn-success">Muokkaa</a> <a class="btn btn-warning">Poista</a></th>
+        </tr>
+        
+        
+    </tbody>
+</table>
+<p>
+    <a href="#" class="btn btn-info">Lisää rata</a>
+</p>
+  
+  
+  
+  
+{% endblock %}

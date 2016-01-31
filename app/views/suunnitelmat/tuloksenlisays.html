@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Lisää tulos</h1>
+
+<p>
+    <a href="#" class="btn btn-info">Lisää rata</a>
+</p>
+
+<form>
+    <div class="form-group">
+        <label>Sijainti</label>
+        <input class="form-control" value="Helsinki" type="text">
+    </div>    
+    <div class="form-group">
+        <label>Rata</label>
+        <input class="form-control" value="Siltamäki" type="text">
+    </div> 
+    <div class="form-group">
+        <label>Ajankohta</label>
+        <input class="form-control" value="1.7.2015" type="text">
+    </div> 
+    <div class="form-group">
+        <label>Muistiinpanot</label>
+        <input class="form-control" value="Tuulinen, tihkusade" type="text">
+    </div> 
+
+    <table class="table table-bordered">
+        <tbody>
+            <tr>
+                <th>1.</th>
+                <th>2.</th>
+                <th>3.</th>
+                <th>4.</th>
+                <th>5.</th>
+                <th>6.</th>
+                <th>7.</th>
+                <th>8.</th>
+                <th>9.</th>
+                <th>10.</th>
+                <th>11.</th>
+                <th>12.</th>
+                <th>13.</th>
+                <th>14.</th>
+                <th>15.</th>
+                <th>16.</th>
+                <th>17.</th>
+                <th>18.</th>
+            </tr>
+            <tr>
+                <td> <span id="T1" contenteditable>3</span></td>
+                <td> <span id="T2" contenteditable>4</span></td>
+                <td> <span id="T3" contenteditable>3</span></td>
+                <td> <span id="T4" contenteditable>3</span></td>
+                <td> <span id="T5" contenteditable>3</span></td>
+                <td> <span id="T6" contenteditable>3</span></td>
+                <td> <span id="T7" contenteditable>5</span></td>
+                <td> <span id="T8" contenteditable>3</span></td>
+                <td> <span id="T9" contenteditable>3</span></td>
+                <td> <span id="T10" contenteditable>3</span></td>
+                <td> <span id="T11" contenteditable>3</span></td>
+                <td> <span id="T12" contenteditable>3</span></td>
+                <td> <span id="T13" contenteditable>3</span></td>
+                <td> <span id="T14" contenteditable>3</span></td>
+                <td> <span id="T15" contenteditable>3</span></td>
+                <td> <span id="T16" contenteditable>3</span></td>
+                <td> <span id="T17" contenteditable>3</span></td>
+                <td> <span id="T18" contenteditable>3</span></td>
+            </tr>
+        </tbody>
+
+    </table>
+    
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Tallenna</button>
+    </div>
+
+</form>
+
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Tuloksesi</h1>
+<p>
+    <!-- Tuloksen lisäys -->
+    <a href="###" class="btn btn-info">Lisää tulos</a>
+</p>
+
+<table class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>Rata</th>
+            <th>Päivämäärä</th>
+            <th>Tulos</th>
+            <th>Muistiinpanot</th>           
+            <th></th>
+        </tr>
+        <tr>
+            <td><a href="#">Siltamäki</td>
+            <td>6.6.2015</td>
+            <td><a href="#">55 (+2)</td>
+            <td>Kilpailu, 8. sija</td>
+            <th><a class="btn btn-success">Muokkaa</a> <a class="btn btn-warning">Poista</a></th>
+        </tr>
+    </thead>
+    
+    
+</table>
+
+{% endblock %}

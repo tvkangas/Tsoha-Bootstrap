@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Radat</h1>
+<table class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <!-- Otsikot -->
+            <th>Radan nimi</th>
+            <th>Sijainti</th>
+            <th>Rataluokitus</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {%for rata in radat %}
+        <tr>
+            <td><a href="{{base_path}}/radat/{{rata.id}}">{{rata.nimi}}</td>
+            <td>{{rata.sijainti}}</td>
+            <td>{{rata.luokitus}}</td>
+            <td><a class="btn btn-success btn-sm" href="{{base_path}}/rata/{{rata.id}}/edit">Muokkaa</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>   
+ 
+</table>
+{% endblock %}

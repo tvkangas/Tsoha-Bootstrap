@@ -11,6 +11,7 @@ class rataController extends BaseController{
         View::make('radat/show.html', array('rata' =>$rata));
     }
     
+<<<<<<< HEAD
     public static function create() {
         View::make('radat/new.html');
     }
@@ -26,5 +27,7 @@ class rataController extends BaseController{
         Redirect::to('/radat/' . $rata->id, array('message' => 'Rata lisätty onnistuneesti'));
     }
     
+=======
+>>>>>>> 81d03ef0e73871e941e3e0c00d3193d0adec4b7d
 }
 

@@ -41,6 +41,7 @@ class rata extends BaseModel {
         }
         return null;
     }
+<<<<<<< HEAD
     
     public function save(){
         $query = DB::connection()->prepare('INSERT INTO Rata (nimi, sijainti, luokitus) VALUES (:nimi, :sijainti, :luokitus) RETURNING id');
@@ -48,5 +49,7 @@ class rata extends BaseModel {
         $row = $query->fetch();
         $this->id = $row['id'];
     }
+=======
+>>>>>>> 81d03ef0e73871e941e3e0c00d3193d0adec4b7d
 
 }

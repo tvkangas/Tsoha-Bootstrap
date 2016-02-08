@@ -24,21 +24,20 @@
     HelloWorldController::tuloslistaus();
   }); 
   
-<<<<<<< HEAD
+
   //$routes->get('/radanlisays', function() {
     //HelloWorldController::radanlisays();
   //}); 
-=======
+
   $routes->get('/radanlisays', function() {
     HelloWorldController::radanlisays();
   }); 
->>>>>>> 81d03ef0e73871e941e3e0c00d3193d0adec4b7d
+
   
   $routes->get('/radat', function() {
     rataController::index();
-  });
-  
-<<<<<<< HEAD
+  });  
+
    
   //radan lisääminen tietokantaan
   $routes->post('/radat', function(){
@@ -53,9 +52,10 @@
   //radan esittely
   $routes->get('/radat/:id', function($id){
      rataController::show($id);
-=======
+  });
+
   //radan esittely
   $routes->get('/radat/:id', function($id){
       rataController::show($id);
->>>>>>> 81d03ef0e73871e941e3e0c00d3193d0adec4b7d
   });
+  

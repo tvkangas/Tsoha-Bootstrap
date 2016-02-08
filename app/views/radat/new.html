@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Radanlisäys</h1>
+
+<form method="post" action="{{base_path}}/radat">
+    <div class="form-group">
+        <label>Nimi</label>
+        <input name="nimi" class="form-control" type="text">
+    </div>
+    <div class="form-group">
+        <label>Sijainti</label>
+        <input name="sijainti" class="form-control" type="text">
+    </div>
+    <div class="form-group">
+        <label>Luokitus</label>
+        <select name="luokitus">
+            <option value="AAA1" selected>AAA1</option>
+            <option value="AA1">AA1</option>
+            <option value="AA2">AA2</option>
+            <option value="AA3">AA3</option>
+            <option value="A1">A1</option>
+            <option value="A2">A2</option>
+            <option value="A3">A3</option>
+            <option value="BB1">BB1</option>
+            <option value="BB2">BB2</option>
+            <option value="BB3">BB3</option>
+            <option value="B1">B1</option>
+            <option value="B2">B2</option>
+            <option value="B3">B3</option>
+            <option value="C1">C1</option>
+            <option value="C2">C2</option>
+            <option value="C3">C3</option>
+            <option value="D1">D1</option>
+            <option value="D2">D2</option>
+            <option value="D3">D3</option>
+        </select>
+    </div>
+    <div class="from-group">
+        <button type="submit" class="btn btn-primary">Tallenna</button>
+    </div>   
+    
+</form>
+{% endblock %}

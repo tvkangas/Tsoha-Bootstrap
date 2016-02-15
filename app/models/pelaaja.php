@@ -39,5 +39,16 @@ class pelaaja extends BaseModel {
         }
         return null;
     }
+    
+    public static function authenticate($nimi, $password) {
+        $query = DB::connection()->prepare('SELECT * FROM Pelaaja WHERE nimi = :nimi AND password = :password LIMIT 1');
+        $query->execute(array('nimi' => $nimi, 'password'=>$password));
+        $row=$query->fetch();
+        if($row) {
+            return new pelaaja(array('id'=>$row['id'], 'nimi'=>$row['nimi'], 'password'=>$row['password']));
+        } else {
+            return null;
+        }
+    }
 
 }

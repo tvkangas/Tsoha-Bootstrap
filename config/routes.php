@@ -59,3 +59,28 @@
       rataController::show($id);
   });
   
+  //radan muokkaus
+  $routes->get('/radat/:id/edit', function($id) {
+      rataController::edit($id);
+  });
+  
+  //radan päivitys
+  $routes->post('/radat/:id/edit', function($id)  {
+      rataController::update($id);
+  });
+  
+  //radan poisto
+  $routes->post('/rata/:id/destroy', function($id) {
+      rataController::destroy($id);
+  });
+  
+  //kirjautuminen
+  $routes->get('/login', function() {
+      pelaajaController::login();
+  });
+  
+  //kirjautuminen
+  $routes->post('/login', function() {
+      pelaajaController::handle_login();
+  });
+  

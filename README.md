@@ -12,3 +12,8 @@ Yleisiä linkkejä:
 ## Työn aihe
 
 Työni aihe on luoda frisbeegolfia varten tulospalvelu.
+
+## Käyttäjätunnus ja salasana
+
+Käyttäjatunnus: Tuukka
+Salasana: ss

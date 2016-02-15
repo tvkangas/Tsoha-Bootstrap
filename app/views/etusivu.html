@@ -4,18 +4,18 @@
   <p>Tervetuloa frisbeegolftulospalveluun! Kirjaudu sisään päästäksesi tarkkailemaan tuloksiasi.</p>
   
   
-  <form>
+  <form method="post" action="{{base_path}}/login">
       <h2>Kirjautuminen</h2>
       <!-- Käyttätunnuksen syöttö -->
       <div class="form-group">
           <label>Käyttäjätunnus</label>
-          <input class="form-control" type="text">
+          <input class="form-control" name="nimi" value="{{nimi}}" type="text">
       </div>
       
       <!-- Salasanan syöttö -->
       <div class="form-group">
           <label>Salasana</label>
-          <input class="form-control" type="password">
+          <input class="form-control" name="password" type="password">
       </div>
       
       <button type="submit" class="btn btn-primary">Kirjaudu sisään</button>

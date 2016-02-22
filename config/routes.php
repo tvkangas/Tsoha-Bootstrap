@@ -84,3 +84,7 @@
       pelaajaController::handle_login();
   });
   
+  $routes->post('/logout', function() {
+    pelaajaController::logout();
+  });
+  

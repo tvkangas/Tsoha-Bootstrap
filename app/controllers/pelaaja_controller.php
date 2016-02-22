@@ -23,5 +23,10 @@ class pelaajaController extends BaseController {
             Redirect::to('/radat', array('message' => 'Tervetuloa' . $user->nimi . '!'));
         }
     }
+    
+    public static function logout(){
+        $_SESSION['user'] = null;
+        Redirect::to('/etusivu', array('Olet kirjautunut ulos'));
+    }
 
 }

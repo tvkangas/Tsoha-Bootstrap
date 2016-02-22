@@ -8,18 +8,19 @@ CREATE TABLE Rata(
 	id SERIAL PRIMARY KEY,
 	nimi varchar(50) NOT NULL,
 	sijainti varchar(50) NOT NULL,
-	luokitus varchar(10)
+        luokitus varchar(10)
 );
 
 CREATE TABLE Tulos(
 	id SERIAL PRIMARY KEY,	
 	rata_id INTEGER REFERENCES Rata(id),
 	pelaaja_id INTEGER REFERENCES Pelaaja(id),
-	paivamaara DATE,
+	paivamaara varchar,
 	muistiinpanot varchar(200)
 );
 
 CREATE TABLE RadanIhannetulokset(
+id SERIAL PRIMARY KEY,	
 	rata_id INTEGER REFERENCES Rata(id),
 	vayla1 INT DEFAULT 3,
 	vayla2 INT DEFAULT 3,
@@ -48,6 +49,7 @@ CREATE TABLE RadanPelaajat(
 
 
 CREATE TABLE TuloksetVaylittain(
+id SERIAL PRIMARY KEY,	
 	tulos_id INTEGER REFERENCES Tulos(id),
 	vayla1 INT DEFAULT 3,
 	vayla2 INT DEFAULT 3,

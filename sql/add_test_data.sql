@@ -13,3 +13,6 @@ INSERT INTO RadanIhannetulokset (rata_id, vayla1, vayla2, vayla3, vayla4, vayla5
 INSERT INTO RadanIhannetulokset (rata_id, vayla1, vayla2, vayla3, vayla4, vayla5, vayla6, vayla7, vayla8, vayla9, vayla10, vayla11, vayla12, vayla13, vayla14, vayla15, vayla16, vayla17, vayla18) VALUES ( (SELECT id FROM Rata WHERE nimi='Valko'), 4, 3, 3, 3, 3, 4, 3, 3, 3, 3, 3, 4, 3, 3, 3, 3, 4, 3);
 
 --Tuloksien lisääminen ei onnistunut, jatkan työstämistä
+INSERT INTO Tulos (rata_id, pelaaja_id, paivamaara, muistiinpanot) VALUES ((SELECT id FROM Rata WHERE nimi='Siltamaki'),(SELECT id FROM Pelaaja WHERE nimi='Tuukka'),'1.2.2015','hyvin meni');
+
+INSERT INTO TuloksetVaylittain(tulos_id, vayla1, vayla2, vayla3, vayla4, vayla5, vayla6, vayla7, vayla8, vayla9, vayla10, vayla11, vayla12, vayla13, vayla14, vayla15, vayla16, vayla17, vayla18) VALUES (1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2);

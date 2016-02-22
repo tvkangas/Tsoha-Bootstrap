@@ -43,5 +43,22 @@ class tulos extends BaseModel {
         }
         return null;
     }
+    public function save(){
+        $query = DB::connection()->prepare('INSERT INTO Tulos (rata_id, pelaaja_id, paivamaara, muistiinpanot) VALUES (:rata_id, :pelaaja_id, :paivamaara, :muistiinpanot');
+        $query->execute(array('rata_id'=>$this->rata_id, 'pelaaja_id'=>$this->pelaaja_id, 'paivamaara'=>$this->paivamaara, 'muistiinpanot'=>$this->muistiinpanot));
+        $row = $query->fetch();
+        $this->id = $row['id'];
+        return $this->id;
+    }
+
+    public function update($id){
+        $query = DB::connection()->prepare('UPDATE Tulos set rata_id = :rata_id, pelaaja_id = :pelaaja_id, paivamaara = :paivamaara, muistiinpanot = :muistiinpanot WHERE id =:id');
+        $query->execute(array('nimi'=>$this->nimi, 'sijainti'=>$this->sijainti, 'luokitus'=>$this->luokitus, 'id'=>$id));
+    }
+    
+    public function destroy($id){
+        $query = DB::connection()->prepare('DELETE FROM Tulos WHERE id=:id');
+        $query->execute(array('id'=>$id));
+    }
 }
 

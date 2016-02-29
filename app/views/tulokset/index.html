@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Tulokset</h1>
+<table class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <!-- Otsikot -->
+            <th>Rata</th>
+            <th>Päivämäärä</th>
+            <th>Tulos</th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {%for tulos in tulokset %}
+        <tr>
+            <td>{{tulos.rata_id}}</td>
+            <td><a href="{{base_path}}/tulokset/{{tulos.id}}">{{tulos.paivamaara}}</td>
+            <td>NA</td>
+            <td><a class="btn btn-success btn-sm" href="{{base_path}}/tulokset/{{tulos.id}}">Tarkastele</a></td>
+            <td><a class="btn btn-success btn-sm" href="{{base_path}}/tulokset/{{tulos.id}}/edit">Muokkaa</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>  
+ 
+</table>
+<p>
+    <a href="tulokset/new" class="btn btn-default">Lisää tulos</a>
+</p>
+    </tbody>   
+ 
+</table>
+{% endblock %}

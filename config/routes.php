@@ -48,11 +48,6 @@
   $routes->get('/radat/new', function(){
      rataController::create();
   });
-  
-  //radan esittely
-  $routes->get('/radat/:id', function($id){
-     rataController::show($id);
-  });
 
   //radan esittely
   $routes->get('/radat/:id', function($id){
@@ -72,6 +67,41 @@
   //radan poisto
   $routes->post('/rata/:id/destroy', function($id) {
       rataController::destroy($id);
+  });
+  
+  
+  $routes->get('/tulokset', function() {
+    tulosController::index();
+  });  
+   
+  //tuloksen lisääminen tietokantaan
+  $routes->post('/tulokset', function(){
+    tulosController::store();
+  });
+  
+  //lisäyslomake (tulos)
+  $routes->get('/tulokset/new', function(){
+     tulosController::create();
+  });
+
+  //tuloksen esittely
+  $routes->get('/tulokset/:id', function($id){
+      tulosController::show($id);
+  });
+  
+  //tuloksen muokkaus
+  $routes->get('/tulokset/:id/edit', function($id) {
+      tulosController::edit($id);
+  });
+  
+  //tuloksen päivitys
+  $routes->post('/tulokset/:id/edit', function($id)  {
+      tulosController::update($id);
+  });
+  
+  //tuloksen poisto
+  $routes->post('/tulokset/:id/destroy', function($id) {
+      tulosController::destroy($id);
   });
   
   //kirjautuminen

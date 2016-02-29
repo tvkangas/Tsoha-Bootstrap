@@ -17,6 +17,7 @@ class rataController extends BaseController {
     }
 
     public static function store() {
+        self::check_logged_in();
         $params = $_POST;        
         $attributes = array(
             'nimi' => $params['nimi'],
@@ -51,9 +52,13 @@ class rataController extends BaseController {
             'luokitus' => $params['luokitus']
         );
         $rata = new rata($attributes);
-        //Virhekäsittely puuttuu
-        $rata->update($id);
+        $errors = $rata->errors();
+        if (count($errors) == 0) {
+            $rata->update($id);
         Redirect::to('/radat', array('message' => 'Muokkaaminen onnistui.'));
+        } else {
+            View::make('radat/edit.html', array('errors' => $errors, 'attributes' =>$attributes));
+        }        
     }
 
     //Poisto

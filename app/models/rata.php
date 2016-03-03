@@ -2,7 +2,7 @@
 
 class rata extends BaseModel {
 
-    public $id, $nimi, $sijainti, $luokitus, $paras, $par, $pelaajaId;
+    public $id, $nimi, $sijainti, $luokitus, $parastulos, $par, $pelaajaId , $paivamaara, $pelaajanimi, $heittomaara;
 
     public function __construct($attributes) {
         parent::__construct($attributes);
@@ -14,37 +14,33 @@ class rata extends BaseModel {
         $query->execute();
         $rows = $query->fetchAll();
         $radat = array();
-        $par = 0;
-        $paras = 0;
+        $parasTulos = 0;
 
         foreach ($rows as $row) {
-            $tulokset = tulos::etsiRadalla($row['id']);
-            foreach ($tulokset as $tulos) {
-                $par = $tulos->par;
-                $paras = $tulos->paras;
-            }
+            //$tulokset = tulos::etsiRadalla($row['id']);
+            //foreach ($tulokset as $tulos) {
+                //$par = $tulos->par;
+                //$parasTulos = $tulos->paras;
+            //}
+            $par = rata::laskePar($row['id']);
             $radat[] = new rata(array(
                 'id' => $row['id'],
                 'nimi' => $row['nimi'],
                 'sijainti' => $row['sijainti'],
                 'luokitus' => $row['luokitus'],
                 'par' => $par,
-                'paras' => $paras
             ));
         }
         return $radat;
     }
 
-    public static function find($id) {
-        $query = DB::connection()->prepare('SELECT * FROM Rata WHERE id = :id LIMIT 1');
-        $query->execute(array('id' => $id));
+    public static function find($rataid) {
+        $query = DB::connection()->prepare('SELECT * FROM Rata WHERE id = :rataid LIMIT 1');
+        $query->execute(array('rataid' => $rataid));
         $row = $query->fetch();
-        $tulokset = tulos::etsiRadalla($row['id']);
-        foreach ($tulokset as $tulos) {
-            $par = $tulos->par;
-            $paras = $tulos->paras;
-            $pelaajaId = $tulos->pelaajaId;
-        }
+        $parastulos = tulos::etsiRadanParasTulos($rataid);
+        //$pelaajanimi = $parastulos->pelaajanimi;
+        $par = rata::laskePar($row['id']);
         if ($row) {
             $rata = new rata(array(
                 'id' => $row['id'],
@@ -52,7 +48,9 @@ class rata extends BaseModel {
                 'sijainti' => $row['sijainti'],
                 'luokitus' => $row['luokitus'],
                 'par' => $par,
-                'pelaajaId' => $pelaajaId
+                'heittomaara' => $parastulos['heittomaara'],
+                'pelaajanimi' => $parastulos['pelaajanimi'],
+                'paivamaara' => $parastulos['paivamaara']                
             ));
             return $rata;
         }
@@ -75,6 +73,16 @@ class rata extends BaseModel {
     public function destroy($id) {
         $query = DB::connection()->prepare('DELETE FROM Rata WHERE id=:id');
         $query->execute(array('id' => $id));
+    }
+    
+    public static function laskePar($rataid) {
+        $query = DB::connection()->prepare('SELECT sum(par) AS partulos FROM Rata
+        LEFT JOIN Vayla ON Vayla.rataId = Rata.id
+        WHERE Rata.id = :rataid;');
+        $query->execute(array('rataid' => $rataid));
+        $row = $query->fetch();
+        $par = $row['partulos'];
+        return $par;
     }
 
     public function validate_nimi() {

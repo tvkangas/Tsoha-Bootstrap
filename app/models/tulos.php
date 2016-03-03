@@ -2,7 +2,7 @@
 
 class tulos extends BaseModel {
 
-    public $id, $rataId, $pelaajaId, $paivamaara, $muistiinpanot, $par, $kokonaistulos, $paras;
+    public $id, $rataid, $pelaajaid, $paivamaara, $muistiinpanot, $par, $heittomaara, $paras, $pelaajanimi ,$paraspelaaja;
 
     public function __construct($attributes) {
         parent::__construct($attributes);
@@ -19,7 +19,7 @@ class tulos extends BaseModel {
             $apu = tulos::laskeKokonaistulos($row['id']);
             $kokonaistulos = $apu['heitot'];
             $par = $apu['par'];
-            
+
             $tulokset[] = new tulos(array(
                 'id' => $row['id'],
                 'rataId' => $row['rataId'],
@@ -51,38 +51,68 @@ class tulos extends BaseModel {
         return null;
     }
     
-    public static function etsiRadalla($rataId) {
-        $query = DB::connection()->prepare('SELECT * FROM Tulos LEFT JOIN Rata ON Tulos.rataId = Rata.id WHERE Tulos.rataId = :rataId');
+    //SQL-kysely hakee kaikkki tulokset, järjestää ne nousevaan järjestykseen.
+    //Tällöin paras tulos on ensimmäisenä, jolloin LIMIT-parametrilla saadaan
+    //vain yksi tulos.
+    public static function etsiRadanParasTulos($rataid) {
+        $query = DB::connection()->prepare('SELECT Tulos.id AS tulosid, Pelaaja.nimi AS pelaajanimi, sum(vt.heitot) AS heittomaara, Tulos.paivamaara AS paivamaara FROM Tulos 
+        JOIN VaylaTulos vt ON vt.TulosId = Tulos.id
+        JOIN Pelaaja ON Tulos.pelaajaid = Pelaaja.id
+        WHERE Tulos.rataid = :rataid
+        GROUP BY Tulos.id, Pelaaja.nimi, Tulos.paivamaara
+        ORDER BY heittomaara ASC
+        LIMIT 1');
+        $query->execute(array('rataid' => $rataid));
+        $row = $query->fetch();
+        $tulos = array(
+            'tulosid' => $row['tulosid'],
+            'pelaajanimi' => $row['pelaajanimi'],
+            'heittomaara' => $row['heittomaara'],
+            'paivamaara' => $row['paivamaara']
+        );
+        return $tulos;
+    }
+
+    public static function etsiRadanParasPelaajaBLOO($rataId) {
+        $query = DB::connection()->prepare('SELECT Tulos.id AS tulosid,
+            Tulos.rataid AS rataid, Tulos.pelaajaid AS pelaajaid,
+            Tulos.paivamaara AS paivamaara, Tulos.muistiinpanot AS muistiinpanot,
+            Rata.nimi AS ratanimi, Pelaaja.nimi AS pelaajanimi FROM Tulos 
+            LEFT JOIN Rata ON Tulos.rataId = Rata.id 
+            LEFT JOIN Pelaaja ON Tulos.PelaajaId = Pelaaja.id 
+            WHERE Tulos.rataId = :rataId');
         $query->execute(array('rataId' => $rataId));
         $rows = $query->fetchAll();
         $tulokset = array();
-        $paras = 0;
+        $paras = -1;
         $parasPelaajaId = '';
+        $paraspelaaja = 'null';
 
         foreach ($rows as $row) {
-            $apu = tulos::laskeKokonaistulos($row['id']);
-            $kokonaistulos = $apu['heitot'];
-            $par = $apu['par'];
+            $apu = tulos::laskeKokonaistulos($row['tulosid']);
+            $heitot = $apu['heitot'];
             $pelaajaId = $apu['pelaajaId'];
-            $rataNimi = $row['nimi'];
-            if ($paras > $kokonaistulos) {
+            $pelaajanimi = $row['pelaajanimi'];
+            //$rataNimi = $row['nimi'];
+            //$paras = -5;
+            if ($paras > $heitot || $paras < 0) {
                 $parasPelaajaId = $pelaajaId;
-                $paras = $kokonaistulos;
+                $paras = $heitot;
+                $paraspelaaja = $pelaajanimi;
             }
-            
+
             $tulokset[] = new tulos(array(
-                'id' => $row['id'],
+                //'id' => $row['id'],
                 'rataId' => $row['rataid'],
-                'pelaajaId' => $row['pelaajaid'],
+                'pelaajanimi' => $row['pelaajanimi'],
                 'paivamaara' => $row['paivamaara'],
                 'muistiinpanot' => $row['muistiinpanot'],
-                'kokonaistulos' => $kokonaistulos,
-                'par' => $par,
+                'heitot' => $heitot,
                 'paras' => $paras,
-                'rataNimi' => $rataNimi,
-                'parasPelaaja' => $pelaajaId
+                //'rataNimi' => $rataNimi,
+                'paraspelaajaid' => $pelaajaId,
+                'paraspelaaja' => $paraspelaaja
             ));
-            
         }
         return $tulokset;
     }
@@ -104,31 +134,15 @@ class tulos extends BaseModel {
         $query = DB::connection()->prepare('DELETE FROM Tulos WHERE id=:id');
         $query->execute(array('id' => $id));
     }
-    
-    public static function laskeKokonaistulos($id){
-        $query = DB::connection()->prepare('SELECT vt.tulosId, vt.vaylaId, vt.heitot, Tulos.pelaajaId AS pelaajaid FROM VaylaTulos vt LEFT JOIN Tulos ON vt.tulosId = Tulos.Id WHERE tulosId = :id');
-        $query->execute(array('id'=>$id));
-        $rows = $query->fetchAll();
-        
-        $heitot = 0;
-        $par = 0;
-        $pelaajaId = 0;
-        foreach($rows as $row) {
-            $pelaajaId = $row['pelaajaid'];
-            $heitot += $row['heitot'];
-            $query_tmp = DB::connection()->prepare('SELECT par FROM Vayla WHERE id = :id LIMIT 1');
-            $query_tmp->execute(array('id' => $id));
-            $vayla = $query_tmp->fetch();
-            if ($row) {
-                $par += $vayla['par'];
-            } else {
-                $par += 3; 
-            }
-        }
-        $palautus = array('par'=>$par, 'heitot'=>$heitot, 'pelaajaId'=>$pelaajaId);
-        return $palautus;
-    }
 
+    public static function laskeKokonaistulos($tulosid) {
+        $query = DB::connection()->prepare('SELECT sum(vt.heitot) AS tulos FROM VaylaTulos vt LEFT JOIN Tulos ON vt.tulosId = Tulos.Id WHERE tulosId = :tulosid');
+        $query->execute(array('tulosid' => $tulosid));
+        $row = $query->fetch();
+        $tulos = $row['tulosid'];
+        return $tulos;
+    }
+    
     public function validate_pvm() {
         if ($this->paivamaara = '') {
             $errors[] = 'Päivämäärä ei saa olla tyhjä!';

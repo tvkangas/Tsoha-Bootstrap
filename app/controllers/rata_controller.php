@@ -18,19 +18,36 @@ class rataController extends BaseController {
 
     public static function store() {
         self::check_logged_in();
-        $params = $_POST;        
+        $params = $_POST;
         $attributes = array(
             'nimi' => $params['nimi'],
             'sijainti' => $params['sijainti'],
             'luokitus' => $params['luokitus']
         );
+
         $rata = new rata($attributes);
         $errors = $rata->errors();
         if (count($errors) == 0) {
             $rata->save();
-            Redirect::to('/radat/' . $rata->id, array('message' => 'Rata lisätty onnistuneesti'));
+            $rataid = $rata->id;
+            self::lisaaVaylat($params, $rataid);
+            Redirect::to('/radat/' . $rataid, array('message' => 'Rata lisätty onnistuneesti'));
         } else {
-            View::make('radat/new.html', array('errors' => $errors, 'attributes' =>$attributes));
+            View::make('radat/new.html', array('errors' => $errors, 'attributes' => $attributes));
+        }
+    }
+
+    public static function lisaaVaylat($params, $rataid) {
+        for ($laskuri = 1; $laskuri <= 18; $laskuri++) {            
+            $str = 'vayla' . $laskuri;
+            $par = $params[$str];
+            $attributes = array(
+                'rataid' => $rataid,
+                'par' => $params[$str],
+                'numero' => $laskuri
+            );
+            $vayla = new vayla($attributes);
+            $vayla->tallennaParilla($rataid, $par, $laskuri);
         }
     }
 
@@ -55,10 +72,10 @@ class rataController extends BaseController {
         $errors = $rata->errors();
         if (count($errors) == 0) {
             $rata->update($id);
-        Redirect::to('/radat', array('message' => 'Muokkaaminen onnistui.'));
+            Redirect::to('/radat', array('message' => 'Muokkaaminen onnistui.'));
         } else {
-            View::make('radat/edit.html', array('errors' => $errors, 'attributes' =>$attributes));
-        }        
+            View::make('radat/edit.html', array('errors' => $errors, 'attributes' => $attributes));
+        }
     }
 
     //Poisto

@@ -2,31 +2,36 @@
 
 class vayla extends BaseModel {
 
-    public $id, $rataId, $par, $numero;
+    public $id, $rataid, $par, $numero;
 
     public function __construct($attributes) {
         parent::__construct($attributes);
     }
-    
+
     //lkm kertoo kuinka monta vaylaa pitää luoda. 
     //Default arvo parille on 3    
-    public function save($lkm, $rataId) {
-        for ($laskuri=1; $laskuri <= $lkm; $laskuri++) {
-            $query = DB::connection()->prepare('INSERT INTO Vayla (rataId, numero) VALUES (:rataId, :numero)');
-            $query->execute(array('rataId' => $rataId, 'numero' => $laskuri));
+    public function save($lkm, $rataid) {
+        for ($laskuri = 1; $laskuri <= $lkm; $laskuri++) {
+            $query = DB::connection()->prepare('INSERT INTO Vayla (rataid, numero) VALUES (:rataid, :numero)');
+            $query->execute(array('rataid' => $rataid, 'numero' => $laskuri));
         }
     }
-    
+
+    public function tallennaParilla($rataid, $par, $numero ) {
+        $query = DB::connection()->prepare('INSERT INTO Vayla (rataid, par, numero) VALUES (:rataid, :par, :numero)');
+        $query->execute(array('rataid' => $rataid, 'par' => $par, 'numero' => $numero));
+    }
+
     //Päivitys (par-tuloksia varten)
     public function update() {
         $query = DB::connection()->prepare('UPDATE Vayla SET par = :par WHERE id = :id');
-        $query->execute(array('par'=>$this->par, 'id'=>$this->id));
+        $query->execute(array('par' => $this->par, 'id' => $this->id));
     }
-    
+
     //Poisto
-    public function destroy($id){
+    public function destroy($id) {
         $query = DB::connection()->prepare('DELETE FROM Vayla WHERE id=:id');
-        $query->execute(array('id'=>$id));
+        $query->execute(array('id' => $id));
     }
 
     public static function etsiRadalla($rataId) {
@@ -57,7 +62,5 @@ class vayla extends BaseModel {
         ));
         return $vayla;
     }
-    
-    
 
 }

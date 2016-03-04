@@ -2,7 +2,7 @@
 
 class tulos extends BaseModel {
 
-    public $id, $rataid, $pelaajaid, $paivamaara, $muistiinpanot, $par, $heittomaara, $paras, $pelaajanimi ,$paraspelaaja;
+    public $id, $tulosid, $rataid, $pelaajaid, $paivamaara, $muistiinpanot, $par, $heittomaara, $paras, $ratanimi, $pelaajanimi, $paraspelaaja;
 
     public function __construct($attributes) {
         parent::__construct($attributes);
@@ -10,23 +10,25 @@ class tulos extends BaseModel {
     }
 
     public static function all() {
-        $query = DB::connection()->prepare('SELECT * FROM Tulos');
-        $query->execute();
+        $pelaajaid = $_SESSION['user'];
+        $query = DB::connection()->prepare('SELECT Tulos.id AS tulosid, Tulos.rataId AS rataid, Tulos.paivamaara AS paivamaara, Tulos.muistiinpanot AS muistiinpanot, Rata.nimi AS ratanimi FROM Tulos
+        LEFT JOIN Rata ON Tulos.rataid = Rata.id
+        WHERE Tulos.pelaajaid =:pelaajaid;');
+        $query->execute(array('pelaajaid' => $pelaajaid));
         $rows = $query->fetchAll();
         $tulokset = array();
 
         foreach ($rows as $row) {
-            $apu = tulos::laskeKokonaistulos($row['id']);
-            $kokonaistulos = $apu['heitot'];
-            $par = $apu['par'];
+            $heittomaara = self::laskeKokonaistulos($row['tulosid']);
+            $par = rata::laskePar($row['rataid']);
 
             $tulokset[] = new tulos(array(
-                'id' => $row['id'],
-                'rataId' => $row['rataId'],
-                'pelaajaId' => $row['pelaajaId'],
+                'tulosid' => $row['tulosid'],
+                'rataid' => $row['rataid'],
+                'ratanimi' => $row['ratanimi'],
                 'paivamaara' => $row['paivamaara'],
                 'muistiinpanot' => $row['muistiinpanot'],
-                'kokonaistulos' => $kokonaistulos,
+                'heittomaara' => $heittomaara,
                 'par' => $par
             ));
         }
@@ -34,17 +36,22 @@ class tulos extends BaseModel {
     }
 
     public static function find($id) {
-        $query = DB::connection()->prepare('SELECT * FROM Tulos WHERE id = :id LIMIT 1');
+        $query = DB::connection()->prepare('SELECT Tulos.id AS tulosid, Tulos.rataId AS rataid, Tulos.paivamaara AS paivamaara, Tulos.muistiinpanot AS muistiinpanot, Rata.nimi AS ratanimi FROM Tulos
+        LEFT JOIN Rata ON Tulos.rataid = Rata.id
+        WHERE Tulos.id = :id');
         $query->execute(array('id' => $id));
         $row = $query->fetch();
+        $heittomaara = self::laskeKokonaistulos($row['tulosid']);
+        $par = rata::laskePar($row['rataid']);
 
         if ($row) {
             $tulos = new tulos(array(
-                'id' => $row['id'],
-                'rataId' => $row['rataId'],
-                'pelaajaId' => $row['pelaajaId'],
+                'tulosid' => $row['tulosid'],
                 'paivamaara' => $row['paivamaara'],
-                'muistiinpanot' => $row['muistiinpanot']
+                'muistiinpanot' => $row['muistiinpanot'],
+                'ratanimi' => $row['ratanimi'],
+                'heittomaara' => $heittomaara,
+                'par' => $par
             ));
             return $tulos;
         }
@@ -73,61 +80,24 @@ class tulos extends BaseModel {
         return $tulos;
     }
 
-    public static function etsiRadanParasPelaajaBLOO($rataId) {
-        $query = DB::connection()->prepare('SELECT Tulos.id AS tulosid,
-            Tulos.rataid AS rataid, Tulos.pelaajaid AS pelaajaid,
-            Tulos.paivamaara AS paivamaara, Tulos.muistiinpanot AS muistiinpanot,
-            Rata.nimi AS ratanimi, Pelaaja.nimi AS pelaajanimi FROM Tulos 
-            LEFT JOIN Rata ON Tulos.rataId = Rata.id 
-            LEFT JOIN Pelaaja ON Tulos.PelaajaId = Pelaaja.id 
-            WHERE Tulos.rataId = :rataId');
-        $query->execute(array('rataId' => $rataId));
+    public static function etsiPelaajanTulokset($pelaajaid) {
+        $query = DB::connection()->prepare('SELECT * FROM Tulos WHERE Tulos.pelaajaid = :pelaajaid');
+        $query->execute();
         $rows = $query->fetchAll();
         $tulokset = array();
-        $paras = -1;
-        $parasPelaajaId = '';
-        $paraspelaaja = 'null';
-
-        foreach ($rows as $row) {
-            $apu = tulos::laskeKokonaistulos($row['tulosid']);
-            $heitot = $apu['heitot'];
-            $pelaajaId = $apu['pelaajaId'];
-            $pelaajanimi = $row['pelaajanimi'];
-            //$rataNimi = $row['nimi'];
-            //$paras = -5;
-            if ($paras > $heitot || $paras < 0) {
-                $parasPelaajaId = $pelaajaId;
-                $paras = $heitot;
-                $paraspelaaja = $pelaajanimi;
-            }
-
-            $tulokset[] = new tulos(array(
-                //'id' => $row['id'],
-                'rataId' => $row['rataid'],
-                'pelaajanimi' => $row['pelaajanimi'],
-                'paivamaara' => $row['paivamaara'],
-                'muistiinpanot' => $row['muistiinpanot'],
-                'heitot' => $heitot,
-                'paras' => $paras,
-                //'rataNimi' => $rataNimi,
-                'paraspelaajaid' => $pelaajaId,
-                'paraspelaaja' => $paraspelaaja
-            ));
-        }
-        return $tulokset;
     }
 
     public function save() {
-        $query = DB::connection()->prepare('INSERT INTO Tulos (rata_id, pelaaja_id, paivamaara, muistiinpanot) VALUES (:rata_id, :pelaaja_id, :paivamaara, :muistiinpanot) RETURNING id');
-        $query->execute(array('rata_id' => $this->rata_id, 'pelaaja_id' => $this->pelaaja_id, 'paivamaara' => $this->paivamaara, 'muistiinpanot' => $this->muistiinpanot));
+        $query = DB::connection()->prepare('INSERT INTO Tulos (rataId, pelaajaId, paivamaara, muistiinpanot) VALUES (:rataid, :pelaajaid, :paivamaara, :muistiinpanot) RETURNING id');
+        $query->execute(array('rataid' => $this->rataid, 'pelaajaid' => $this->pelaajaid, 'paivamaara' => $this->paivamaara, 'muistiinpanot' => $this->muistiinpanot));
         $row = $query->fetch();
         $this->id = $row['id'];
         return $this->id;
     }
 
-    public function update($id) {
-        $query = DB::connection()->prepare('UPDATE Tulos set rata_id = :rata_id, pelaaja_id = :pelaaja_id, paivamaara = :paivamaara, muistiinpanot = :muistiinpanot WHERE id =:id');
-        $query->execute(array('nimi' => $this->nimi, 'sijainti' => $this->sijainti, 'luokitus' => $this->luokitus, 'id' => $id));
+    public function update($tulosid) {
+        $query = DB::connection()->prepare('UPDATE Tulos set rataId = :rataid, pelaajaid = :pelaajaid, paivamaara = :paivamaara, muistiinpanot = :muistiinpanot WHERE id =:tulosid');
+        $query->execute(array('rataid' => $this->rataid, 'pelaajaid' => $this->pelaajaid, 'paivamaara' => $this->paivamaara, 'muistiinpanot' => $this->muistiinpanot, 'tulosid' => $tulosid));
     }
 
     public function destroy($id) {
@@ -138,8 +108,8 @@ class tulos extends BaseModel {
     public static function laskeKokonaistulos($tulosid) {
         $query = DB::connection()->prepare('SELECT sum(vt.heitot) AS tulos FROM VaylaTulos vt LEFT JOIN Tulos ON vt.tulosId = Tulos.Id WHERE tulosId = :tulosid');
         $query->execute(array('tulosid' => $tulosid));
-        $row = $query->fetch();
-        $tulos = $row['tulosid'];
+        $row = $query->fetch();        
+        $tulos = $row['tulos'];
         return $tulos;
     }
     

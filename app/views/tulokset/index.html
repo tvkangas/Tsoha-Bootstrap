@@ -15,11 +15,11 @@
     <tbody>
         {%for tulos in tulokset %}
         <tr>
-            <td>{{tulos.rata_id}}</td>
-            <td><a href="{{base_path}}/tulokset/{{tulos.id}}">{{tulos.paivamaara}}</td>
-            <td>NA</td>
-            <td><a class="btn btn-success btn-sm" href="{{base_path}}/tulokset/{{tulos.id}}">Tarkastele</a></td>
-            <td><a class="btn btn-success btn-sm" href="{{base_path}}/tulokset/{{tulos.id}}/edit">Muokkaa</a>
+            <td>{{tulos.ratanimi}}</td>
+            <td>{{tulos.paivamaara|date("d.m.y")}}</td>
+            <td>{{tulos.heittomaara}} ({{tulos.heittomaara-tulos.par}})</td>
+            <td><a class="btn btn-success btn-sm" href="{{base_path}}/tulokset/{{tulos.tulosid}}">Tarkastele</a></td>
+            <td><a class="btn btn-success btn-sm" href="{{base_path}}/tulokset/{{tulos.tulosid}}/edit">Muokkaa</a>
             </td>
         </tr>
         {% endfor %}

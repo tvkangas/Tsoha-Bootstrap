@@ -16,5 +16,14 @@
           Redirect::to('/etusivu', array('message' => 'Kirjaudu sisään'));
       }
     }
+    
+    public static function get_is_admin() {
+        return is_admin();
+    }
+    
+    public static function is_admin() {
+        $pelaaja == Pelaaja::find($_SESSION['user']);
+        return $pelaaja->admin;
+    }
 
   }

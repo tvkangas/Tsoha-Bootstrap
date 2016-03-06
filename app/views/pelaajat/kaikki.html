@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Kaikki pelaajat</h1>
+<thead>
+    <tr>
+        <!-- Otsikot -->
+        <th>Nimi</th>
+        <th></th>
+<br />
+</tr>
+</thead>
+
+{%for pelaaja in pelaajat %}
+<tr>
+    <td>{{pelaaja.nimi}}</td>
+<form method="post" action="{{base_path}}/pelaaja/{{pelaaja.id}}/destroy" style="display: inline-block;">
+    <div class="form-group">
+        <input class="form-control" name="id" value="{{pelaaja.id}}" type="hidden">
+    </div>
+    <button type="submit" class="btn btn-danger">Poista</button>
+</form>
+<br />
+</tr>
+{% endfor %}
+{% endblock %}

@@ -24,7 +24,6 @@ class rataController extends BaseController {
             'sijainti' => $params['sijainti'],
             'luokitus' => $params['luokitus']
         );
-
         $rata = new rata($attributes);
         $errors = $rata->errors();
         if (count($errors) == 0) {
@@ -57,7 +56,8 @@ class rataController extends BaseController {
         $rata = rata::find($id);
         View::make('/radat/edit.html', array('rata' => $rata));
     }
-
+    
+  
     // radan päivitys
     public static function update($id) {
         self::check_logged_in();
@@ -72,9 +72,24 @@ class rataController extends BaseController {
         $errors = $rata->errors();
         if (count($errors) == 0) {
             $rata->update($id);
+            self::paivitaVaylat($params, $id);
             Redirect::to('/radat', array('message' => 'Muokkaaminen onnistui.'));
         } else {
             View::make('radat/edit.html', array('errors' => $errors, 'attributes' => $attributes));
+        }
+    }
+    
+    public static function paivitaVaylat($params, $rataid) {
+        for ($laskuri = 1; $laskuri <= 18; $laskuri++) {            
+            $str = 'vayla' . $laskuri;
+            $par = $params[$str];
+            $attributes = array(
+                'rataid' => $rataid,
+                'par' => $params[$str],
+                'numero' => $laskuri
+            );
+            $vayla = new vayla($attributes);
+            $vayla->update($rataid, $par, $laskuri);
         }
     }
 

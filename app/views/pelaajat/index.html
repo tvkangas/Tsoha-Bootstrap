@@ -1,3 +1,9 @@
-{% extends "base.html %}
+{% extends "base.html" %}
 {% block content %}
-<h1>Pelaajat</h1>
+<h1>Pelaajasivu</h1>
+<tbody>
+<p>
+    <a class="btn btn-success btn-sm" href="{{base_path}}/pelaaja/{{pelaaja.id}}/edit">Muuta salasanaa</a>
+</p>
+</tbody>
+{% endblock %}

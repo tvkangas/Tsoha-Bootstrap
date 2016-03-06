@@ -17,11 +17,6 @@ class rata extends BaseModel {
         $parasTulos = 0;
 
         foreach ($rows as $row) {
-            //$tulokset = tulos::etsiRadalla($row['id']);
-            //foreach ($tulokset as $tulos) {
-                //$par = $tulos->par;
-                //$parasTulos = $tulos->paras;
-            //}
             $par = rata::laskePar($row['id']);
             $radat[] = new rata(array(
                 'id' => $row['id'],

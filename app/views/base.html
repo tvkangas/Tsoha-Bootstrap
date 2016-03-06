@@ -42,12 +42,22 @@
             <li><a href="{{base_path}}">Etusivu</a></li>
             <li><a href="{{base_path}}/radat">Radat</a></li>
             <li><a href="{{base_path}}/tulokset">Tulokset</a></li>
+            <li><a href="{{base_path}}/pelaaja">Pelaajasivu</a></li>
           </ul>
+            {% if user_logged_in.admin %}
+            <form class="navbar-form navbar-right" method="post" action="{{base_path}}/kayttajat">
+                <button type="submit" class="btn btn-success">Käyttäjälistaus</button>
+            </form>
+            {% endif %}
+            
             {% if user_logged_in %}
             <form class="navbar-form navbar-right" method="post" action="{{base_path}}/logout">
                 <button type="submit" class="btn btn-success">Kirjaudu ulos</button>
             </form>
             {% else %}
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="{{base_path}}/rekisterointi">Rekisteröidy</a></li>            
+            </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="{{base_path}}/login">Kirjaudu sisään</a></li>            
             </ul>

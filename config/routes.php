@@ -1,43 +1,16 @@
 <?php
 
   $routes->get('/', function() {
-    HelloWorldController::index();
-  });
-
-  $routes->get('/hiekkalaatikko', function() {
-    HelloWorldController::sandbox();
+    etusivuController::index();
   });
   
   $routes->get('/etusivu', function() {
-    HelloWorldController::login();
+    etusivuController::index();
   });  
-  
-  //$routes->get('/radat', function() {
-   // HelloWorldController::radat();
-  //});  
-  
-  $routes->get('/tuloslisays', function() {
-    HelloWorldController::tuloslisays();
-  }); 
-  
-  $routes->get('/tuloslistaus', function() {
-    HelloWorldController::tuloslistaus();
-  }); 
-  
-
-  //$routes->get('/radanlisays', function() {
-    //HelloWorldController::radanlisays();
-  //}); 
-
-  $routes->get('/radanlisays', function() {
-    HelloWorldController::radanlisays();
-  }); 
-
   
   $routes->get('/radat', function() {
     rataController::index();
   });  
-
    
   //radan lisääminen tietokantaan
   $routes->post('/radat', function(){
@@ -67,8 +40,7 @@
   //radan poisto
   $routes->post('/rata/:id/destroy', function($id) {
       rataController::destroy($id);
-  });
-  
+  });  
   
   $routes->get('/tulokset', function() {
     tulosController::index();
@@ -116,5 +88,38 @@
   
   $routes->post('/logout', function() {
     pelaajaController::logout();
+  });
+  
+  $routes->get('/rekisterointi', function() {
+    pelaajaController::rekisteroi();
+  });
+  
+  $routes->post('/rekisterointi', function() {
+    pelaajaController::store();
+  });
+  
+  $routes->get('/pelaaja', function() {
+    pelaajaController::index();
+  });
+  
+  //pelaajan muokkaus
+  $routes->get('/pelaaja/:id/edit', function($id) {
+      pelaajaController::edit($id);
+  });
+  
+  $routes->post('/pelaaja/:id/edit', function($id) {
+      pelaajaController::update($id);
+  });
+  
+  $routes->get('/kayttajat', function() {
+    pelaajaController::kaikki();
+  });  
+  
+  $routes->post('/kayttajat', function() {
+    pelaajaController::kaikki();
+  }); 
+  
+  $routes->post('/pelaaja/:id/destroy', function($id) {
+      pelaajaController::destroy($id);
   });
   

@@ -24,49 +24,109 @@ class tulosController extends BaseController {
     public static function store() {
         self::check_logged_in();
         $params = $_POST;
+        $pelaajaid = $_SESSION['user'];
         $attributes = array(
-            'rata_id' => $params['rata_id'],
-            'pelaaja_id' => $params['pelaaja_id'],
+            'rataid' => $params['rataid'],
+            'pelaajaid' => $pelaajaid,
             'paivamaara' => $params['paivamaara'],
             'muistiinpanot' => $params['muistiinpanot']
         );
         $tulos = new tulos($attributes);
-        $errors = 0;
-        //$errors = $tulos->errors();
         $tulos->save();
+        $tulosid = $tulos->id;
+        self::lisaaVaylatulokset($params, $tulosid);
         Redirect::to('/tulokset', array('message' => 'Tulos lisätty onnistuneesti'));
-//        if (count($errors) == 0) {
-        //$tulos->save();
-        //Redirect::to('/tulokset/' . $tulos->id, array('message' => 'Tulos lisätty onnistuneesti'));
-        //} else {
-        //View::make('tulokset/new.html', array('errors' => $errors, 'attributes' =>$attributes));
-        //}
+    }
+
+    public static function lisaaVaylatulokset($params, $tulosid) {
+        $rataid = $params['rataid'];
+        $tulosid = $tulosid;
+        for ($laskuri = 1; $laskuri <= 18; $laskuri++) {
+            $str = 'vayla' . $laskuri;
+            $tulos = $params[$str];
+            $vayla = vayla::etsiRadallaJaNumerolla($rataid, $laskuri);
+            $vaylaid = $vayla->id;
+            $attributes = array(
+                'tulosid' => $tulosid,
+                'vaylaid' => $vaylaid,
+                'heitot' => $tulos
+            );
+            $vaylatulos = new vaylatulos($attributes);
+            $vaylatulos->save();
+        }
     }
 
     public static function edit($id) {
         self::check_logged_in();
         $tulos = tulos::find($id);
         $radat = rata::all();
-        View::make('/tulokset/edit.html', array('tulos' => $tulos, 'radat' => $radat));
+        $tulokset = tulos::haeTuloksenVaylatulokset($id);
+        View::make('/tulokset/edit.html', array('tulos' => $tulos, 'radat' => $radat, 'tulokset' => $radat));
     }
 
     public static function update($id) {
         self::check_logged_in();
         $params = $_POST;
+        $pelaajaid = $_SESSION['user'];
         $attributes = array(
             'id' => $id,
-            'rata_id' => $params['rata_id'],
-            'pelaaja_id' => $params['pelaaja_id'],
+            'rataid' => $params['rataid'],
+            'pelaajaid' => $pelaajaid,
             'paivamaara' => $params['paivamaara'],
             'muistiinpanot' => $params['muistiinpanot']
         );
         $tulos = new tulos($attributes);
-        $errors = $tulos->errors();
-        if (count($errors) == 0) {
-            $tulos->update($id);
-            Redirect::to('/tulokset', array('message' => 'Muokkaaminen onnistui.'));
-        } else {
-            View::make('tulokset/edit.html', array('errors' => $errors, 'attributes' => $attributes));
+        //$errors = $tulos->errors();
+        //if (count($errors) == 0) {
+        $tulos->update($id);
+        self::paivitaVaylatulokset($params, $id);
+        Redirect::to('/tulokset', array('message' => 'Muokkaaminen onnistui.'));
+        //} else {
+            //View::make('tulokset', array('errors' => $errors, 'attributes' => $attributes));
+        //}
+    }
+
+    public static function paivitaVaylatulokset($params, $tulosid) {
+        $rataid = $params['rataid'];
+        $tulosid = $tulosid;
+        for ($laskuri = 1; $laskuri <= 18; $laskuri++) {
+            $str = 'vayla' . $laskuri;
+            $tulos = $params[$str];
+            $vayla = vayla::etsiRadallaJaNumerolla($rataid, $laskuri);
+            $vaylaid = $vayla->id;
+            $attributes = array(
+                'tulosid' => $tulosid,
+                'vaylaid' => $vaylaid,
+                'heitot' => $tulos
+            );
+            $vaylatulos = new vaylatulos($attributes);
+            $vaylatulos->update($tulosid, $vaylaid, $tulos);
+        }
+
+        for ($laskuri = 1; $laskuri <= 18; $laskuri++) {
+            $str = 'vayla' . $laskuri;
+            $tulos = $params[$str];
+            $vayla = vayla::etsiRadallaJaNumerolla($rataid, $laskuri);
+            $vaylaid = $vayla->id;
+            $attributes = array(
+                'tulosid' => $tulosid,
+                'vaylaid' => $vaylaid,
+                'heitot' => $tulos
+            );
+            $vaylatulos = new vaylatulos($attributes);
+            $vaylatulos->save();
+        }
+
+        for ($laskuri = 1; $laskuri <= 18; $laskuri++) {
+            $str = 'vayla' . $laskuri;
+            $par = $params[$str];
+            $attributes = array(
+                'rataid' => $rataid,
+                'par' => $params[$str],
+                'numero' => $laskuri
+            );
+            $vayla = new vayla($attributes);
+            $vayla->update($rataid, $par, $laskuri);
         }
     }
 

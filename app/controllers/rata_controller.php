@@ -46,7 +46,7 @@ class rataController extends BaseController {
                 'numero' => $laskuri
             );
             $vayla = new vayla($attributes);
-            $vayla->tallennaParilla($rataid, $par, $laskuri);
+            $vayla->save();
         }
     }
 
